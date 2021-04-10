@@ -8,12 +8,23 @@
     const newTodo = {
       title: inputValue,
       done: false,
-      id: todos.length,
+      id: Math.floor(Math.random() * 11000),
     };
     todos = [newTodo, ...todos];
     inputValue = "";
   }
+  function deleteTodo(id) {
+    let newTodo = todos.filter((value) => value.id !== id);
+    todos = newTodo;
+  }
 </script>
+
+<svelte:head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
+</svelte:head>
 
 <main>
   <form on:submit|preventDefault={addTodo}>
@@ -24,7 +35,15 @@
       bind:value={inputValue}
       required
     />
-    <input type="submit" value="Add Todo" />
+    <input
+      style="background:rgb(73 69 232);
+    color: white;
+    font-size: 15px;
+    padding: .3em;
+    cursor:pointer;"
+      type="submit"
+      value="Add Todo"
+    />
   </form>
   <!--  -->
   <div class="container">
@@ -33,16 +52,29 @@
       <h3>Not Completed</h3>
       {#each todos.filter((todo) => !todo.done) as todo (todo.id)}
         <div
-          on:click={() => {
-            todo.done = true;
-          }}
           class="todo-item"
           animate:flip={{ duration: 400 }}
           transition:fade={{ duration: 300 }}
           style="display: flex; flex-direction: row;"
         >
           <input type="checkbox" bind:checked={todo.done} />
-          <div>{todo.title}</div>
+          <div
+            class="title"
+            on:click={() => {
+              todo.done = true;
+            }}
+          >
+            {todo.title}
+          </div>
+          <div style="">
+            <i
+              style="cursor: pointer;"
+              class="fa fa-trash-o"
+              on:click={() => {
+                deleteTodo(todo.id);
+              }}
+            />
+          </div>
         </div>
       {/each}
     </div>
@@ -51,16 +83,29 @@
       <h3>Completed</h3>
       {#each todos.filter((todo) => todo.done) as todo (todo.id)}
         <div
-          on:click={() => {
-            todo.done = false;
-          }}
           class="todo-item2"
           animate:flip={{ duration: 400 }}
           transition:slide={{ duration: 400 }}
           style="display: flex; flex-direction: row;"
         >
           <input type="checkbox" bind:checked={todo.done} />
-          <div>{todo.title}</div>
+          <div
+            class="title"
+            on:click={() => {
+              todo.done = false;
+            }}
+          >
+            {todo.title}
+          </div>
+          <div style="">
+            <i
+              style="cursor:pointer;"
+              on:click={() => {
+                deleteTodo(todo.id);
+              }}
+              class="fa fa-trash-o"
+            />
+          </div>
         </div>
       {/each}
     </div>
@@ -74,10 +119,13 @@
     display: flex;
     margin: 10px;
     align-items: center;
-    cursor: pointer;
     border-radius: 5px;
+    justify-content: space-between;
   }
 
+  .title {
+    cursor: pointer;
+  }
   .todo-item {
     background-color: #e84545;
     padding: 10px;
@@ -109,9 +157,18 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
   }
   form .input {
     width: 300px;
     height: 25px;
+  }
+  .input {
+    background: #20264a;
+    color: white;
+    outline: none;
+    border: none;
+    height: 3em;
+    font-size: 1.2em;
   }
 </style>
